@@ -1,0 +1,7 @@
+fastapi[all]
+onnx
+onnxruntime
+torch
+torchvision
+numpy
+opencv-python

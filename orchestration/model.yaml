@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inference-model
+  namespace: model-inference
+spec:
+  selector:
+    matchLabels:
+      app: inference-model
+  template:
+    metadata:
+      labels:
+        app: inference-model
+    spec:
+      containers:
+      - name: inference-model
+        image: dockerhub.io/inference_model:latest
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inference-model
+  namespace: model-inference
+spec:
+  selector:
+    app: inference-model
+  ports:
+  - port: 3000
+    targetPort: 3000
+
+

@@ -1,0 +1,101 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Fast API Template</title>
+        <style>
+            body {
+                text-align: center;
+                margin: 20px;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            img {
+                max-width: 1000px;
+                margin: 10px;
+                border-radius: 8px
+            }
+            form {
+                margin: 30px;
+                display: inline-block;
+                padding: 1em;
+                border: 1px solid #ccc;
+                border-radius: 1em;
+            }
+            p + p {
+                margin-top: 1em
+            }
+            label {
+                display: inline-block;
+                min-width: 90px;
+                text-align: right;
+            }
+            input,textarea {
+                font: 1em sans-serif;
+                width: 300px;
+                box-sizing: border-box;
+                border: 1px solid #999;
+            }
+            input:focus 
+            textarea:focus {
+                outline-style: solid;
+                outline-color: #000;
+            }
+            textarea {
+                /* Align multiline text fields with their labels */
+                vertical-align: top;
+                /* Provide space to type some text */
+                height: 5em;
+            }
+            .button {
+                /* Align buttons with the text fields */
+                padding-left: 90px; /* same size as the label elements */
+            }
+
+            button {
+                /* This extra margin represent roughly the same space as the space
+                    between the labels and their text fields */
+                margin-left: 0.5em;
+            }
+
+        </style>
+    </head>
+    <body>
+        <form id="input_form" method="post" enctype="multipart/form-data"> 
+            <p>
+                <label for="input_file">Input File:</label>
+                <input type="file" id="input_file" name="file"/>
+            </p>
+            <p>
+                <input type="submit" value="Evaluate"/>
+            </p>
+        </form>
+        <div id="response"></div>
+        <script>
+            document.getElementById("input_form").addEventListener('submit',async (e) =>{
+                document.getElementById("response").innerHTML="";
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                try {
+                    response = await fetch("/", {
+                        'method': 'POST',
+                        'headers': {
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+                    const data = await response.json();
+                    const block = document.createElement("div");
+                    const filename = document.createElement("p");
+                    filename.innerHTML = "Label Predicted:" + data["predictedlabel"];
+                    const img = document.createElement("img");
+                    img.src = data["encoded_img"];
+                    img.alt="Base64 Image";
+                    block.append(filename);
+                    block.append(img);
+                    document.getElementById("response").appendChild(block);
+                }catch(e) {
+                    console.log(e);
+                }
+            });
+        </script>
+    </body>
+</html>
